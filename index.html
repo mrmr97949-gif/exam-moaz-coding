@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امتحان شامل للغة HTML - Muaz Coding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .english-brand {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        input[type="radio"] {
+            accent-color: #2563eb;
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-left: 0.75rem;
+            cursor: pointer;
+        }
+
+        .question-card {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .question-card:hover {
+            border-color: #bfdbfe;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06);
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #3498db;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 antialiased min-h-screen flex flex-col relative">
+
+    <div id="welcome-screen"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-50 p-4 transition-opacity duration-500">
+        <div
+            class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-xl w-full text-center border-t-8 border-blue-600 fade-in relative">
+            <h1 class="english-brand text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight mb-2">Muaz Coding
+            </h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 mt-2">امتحان شامل للغة HTML</h2>
+
+            <div class="space-y-4 mb-6 text-right">
+                <div>
+                    <label for="student-name" class="block text-sm font-bold text-gray-700 mb-2">الاسم الثلاثي للطالب
+                        (مطلوب)</label>
+                    <input type="text" id="student-name" placeholder="أدخل اسمك للبدء..."
+                        class="w-full px-5 py-4 rounded-xl border-2 border-gray-200 text-lg focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none">
+                    <p id="name-error" class="text-red-500 text-sm mt-2 hidden font-bold">⚠️ الرجاء إدخال اسمك للبدء.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 rounded-xl p-5 text-right mb-8 border border-blue-100 shadow-inner">
+                <h3 class="font-bold text-blue-800 text-sm mb-2 flex items-center">
+                    <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    تعليمات هامة:
+                </h3>
+                <ul class="list-disc list-inside text-blue-900 text-xs md:text-sm space-y-1 font-medium">
+                    <li>يتكون الامتحان من <strong>50 سؤالاً</strong>.</li>
+                    <li>المدة <strong>40 دقيقة</strong>. يتم التسليم التلقائي عند انتهاء الوقت.</li>
+                    <li>علامة النجاح هي <strong>28 / 50</strong>.</li>
+                    <li><strong class="text-red-600">سيتم حفظ النتيجة وإرسالها للأستاذ تلقائياً بعد الإنهاء.</strong>
+                    </li>
+                </ul>
+            </div>
+
+            <button onclick="startExam()" id="start-btn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold py-4 px-8 rounded-2xl shadow-lg transform transition hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center">
+                <span id="start-btn-text">بدء الامتحان الآن</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="exam-screen" class="hidden flex-col min-h-screen flex-grow w-full">
+        <!-- Sticky Header with Timer -->
+        <header class="glass-header sticky top-0 z-40 shadow-sm transition-all">
+            <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="english-brand text-xl md:text-2xl font-black text-blue-700">
+                    Muaz Coding
+                </div>
+
+                <div class="flex items-center bg-white px-4 py-2 rounded-full border-2 border-blue-500 shadow-sm">
+                    <span id="current-student-name"
+                        class="hidden md:inline text-sm font-bold text-gray-600 ml-4 border-l pl-4 border-gray-200"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 ml-2 animate-pulse" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="timer-display"
+                        class="english-brand text-xl font-bold text-blue-600 tabular-nums tracking-wider">40:00</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 fade-in">
+            <div id="result-section"
+                class="hidden mb-8 bg-white rounded-2xl shadow-xl overflow-hidden border-2 transition-all duration-500 transform scale-95 opacity-0">
+                <div class="p-8 text-center relative overflow-hidden">
+                    <div id="result-bg" class="absolute inset-0 opacity-10"></div>
+                    <div class="relative z-10">
+                        <h2 id="result-title" class="text-3xl font-black mb-2"></h2>
+                        <p id="result-message" class="text-gray-600 text-lg mb-6 font-medium"></p>
+
+                        <div
+                            class="inline-block bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-inner min-w-[250px] mb-4">
+                            <p class="text-sm text-gray-500 font-bold mb-2 uppercase tracking-wider">النتيجة النهائية
+                            </p>
+                            <div class="text-5xl font-black mb-2 english-brand" id="result-score"></div>
+                            <div id="result-status" class="text-xl font-bold mt-2"></div>
+                        </div>
+
+                        <!-- Database Status Indicator -->
+                        <div id="db-status-container"
+                            class="mt-4 inline-flex items-center justify-center px-6 py-3 rounded-full bg-blue-50 text-blue-700 text-sm font-bold border border-blue-200 transition-colors duration-300">
+                            <div id="db-loader"
+                                class="loader border-blue-300 border-top-blue-700 w-5 h-5 ml-3 border-2"></div>
+                            <span id="db-status-text">جاري إرسال النتيجة وحفظها في قاعدة البيانات...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="quiz-form" onsubmit="event.preventDefault();">
+                <div id="questions-container" class="space-y-6">
+                    <!-- Questions injected here via JS -->
+                </div>
+
+                <div class="mt-12 flex justify-center pb-16">
+                    <button type="button" id="submit-btn" onclick="submitExam(false)"
+                        class="bg-gray-800 hover:bg-gray-900 text-white text-xl font-bold py-4 px-16 rounded-full shadow-xl transform transition hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-gray-300">
+                        إنهاء الامتحان وتسليم الأجوبة
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script type="module">
+        // استيراد مكتبات Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // =========================================================================
+        // 🔴 🔴 🔴 ضع كود الربط الخاص بك من منصة Firebase هنا 🔴 🔴 🔴
+        // استبدل القيم الموجودة داخل الأقواس بالقيم التي سيعطيها لك موقع Firebase
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // تهيئة Firebase
+        let db;
+        let isFirebaseReady = false;
+
+        try {
+            // Check if user changed the placeholder config
+            if (firebaseConfig.projectId !== "YOUR_PROJECT_ID") {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                isFirebaseReady = true;
+                console.log("تم تهيئة اتصال Firebase بنجاح.");
+            } else {
+                console.warn("تنبيه: لم تقم بوضع كود ربط Firebase الخاص بك. لن يتم حفظ النتائج أونلاين.");
+            }
+        } catch (error) {
+            console.error("حدث خطأ أثناء الاتصال بقاعدة البيانات:", error);
+        }
+
+        const questionsData = [
+            { q: "ما هو العنصر الذي يحدد نوع المستند كـ HTML5؟", opts: ["<html5>", "<!DOCTYPE html>", "<meta type=\"html5\">", "<doctype html>"], ans: 1 },
+            { q: "أي وسم يحتوي على جميع المحتويات المرئية للمستخدم في صفحة الويب؟", opts: ["<head>", "<html>", "<body>", "<main>"], ans: 2 },
+            { q: "ما هو الوسم المستخدم لكتابة عنوان الصفحة الذي يظهر في علامة تبويب المتصفح؟", opts: ["<header>", "<meta>", "<title>", "<h1>"], ans: 2 },
+            { q: "أي من الوسوم التالية يمثل أكبر حجم لعنوان نصي (Heading)؟", opts: ["<head>", "<h6>", "<heading>", "<h1>"], ans: 3 },
+            { q: "ما هو الوسم المستخدم لإنشاء فقرة نصية (Paragraph)؟", opts: ["<text>", "<p>", "<pg>", "<para>"], ans: 1 },
+            { q: "لإنشاء سطر جديد (Line Break) دون بدء فقرة جديدة، نستخدم:", opts: ["<br>", "<lb>", "<break>", "<newline>"], ans: 0 },
+            { q: "لإضافة خط أفقي فاصل في الصفحة، نستخدم:", opts: ["<line>", "<hr>", "<tr>", "<hl>"], ans: 1 },
+            { q: "كيف يتم كتابة تعليق (Comment) في كود HTML لا يظهر في المتصفح؟", opts: ["// تعليق", "/* تعليق */", "<!-- تعليق -->", "' تعليق"], ans: 2 },
+            { q: "ما هو الوسم الدلالي لجعل النص غامقاً ومهمّاً؟", opts: ["<b>", "<i>", "<important>", "<strong>"], ans: 3 },
+            { q: "لتمييز نص بلون مختلف (Highlighter)، نستخدم وسم:", opts: ["<mark>", "<highlight>", "<color>", "<bg>"], ans: 0 },
+            { q: "أي وسم يستخدم لجعل النص مائلاً (Italic) مع إعطائه أهمية في النطق؟", opts: ["<i>", "<italic>", "<em>", "<span>"], ans: 2 },
+            { q: "لرسم خط يتوسط النص للدلالة على أنه تم حذفه، نستخدم:", opts: ["<strike>", "<del>", "<s>", "<remove>"], ans: 1 },
+            { q: "لكتابة نص أسفل خط النص العادي (مثل H₂O)، نستخدم:", opts: ["<sub>", "<sup>", "<down>", "<lower>"], ans: 0 },
+            { q: "لكتابة نص أعلى خط النص العادي (مثل x²)، نستخدم:", opts: ["<sub>", "<sup>", "<up>", "<top>"], ans: 1 },
+            { q: "ما هو الوسم المستخدم لإدراج اقتباس طويل من مصدر آخر؟", opts: ["<quote>", "<q>", "<blockquote>", "<cite>"], ans: 2 },
+            { q: "لإنشاء رابط تشعبي (Link)، نستخدم وسم:", opts: ["<link>", "<href>", "<a>", "<url>"], ans: 2 },
+            { q: "ما هي الخاصية (Attribute) التي تحدد مسار الرابط في وسم <a>؟", opts: ["src", "href", "link", "target"], ans: 1 },
+            { q: "لفتح الرابط في نافذة أو علامة تبويب جديدة، نستخدم الخاصية:", opts: ["target=\"_new\"", "target=\"_blank\"", "open=\"new\"", "window=\"_blank\""], ans: 1 },
+            { q: "لإدراج صورة في الصفحة، نستخدم وسم:", opts: ["<picture>", "<image>", "<img>", "<src>"], ans: 2 },
+            { q: "الخاصية التي تحدد مسار الصورة هي:", opts: ["href", "src", "path", "url"], ans: 1 },
+            { q: "النص البديل للصورة الذي يظهر إذا لم يتم تحميلها يُكتب باستخدام الخاصية:", opts: ["title", "alt", "text", "desc"], ans: 1 },
+            { q: "لإنشاء قائمة غير مرتبة (منقطة)، نستخدم:", opts: ["<ol>", "<ul>", "<li>", "<list>"], ans: 1 },
+            { q: "لإنشاء قائمة مرتبة (مرقمة)، نستخدم:", opts: ["<ul>", "<ol>", "<li>", "<dl>"], ans: 1 },
+            { q: "كل عنصر داخل القائمة (سواء مرتبة أو غير مرتبة) يجب أن يوضع داخل وسم:", opts: ["<item>", "<list-item>", "<li>", "<ul>"], ans: 2 },
+            { q: "لإنشاء قائمة تعريفات (مثل قاموس)، نستخدم وسم:", opts: ["<dl>", "<dfn>", "<dt>", "<dd>"], ans: 0 },
+            { q: "لإنشاء جدول، نبدأ بوسم:", opts: ["<tr>", "<table>", "<td>", "<grid>"], ans: 1 },
+            { q: "لإنشاء صف (Row) داخل الجدول، نستخدم:", opts: ["<td>", "<th>", "<tc>", "<tr>"], ans: 3 },
+            { q: "لإنشاء خلية بيانات عادية داخل صف في الجدول، نستخدم:", opts: ["<td>", "<tr>", "<th>", "<cell>"], ans: 0 },
+            { q: "لإنشاء خلية تمثل رأس الجدول (Table Header وتكون غامقة وموسّطة)، نستخدم:", opts: ["<thead>", "<head>", "<th>", "<tr>"], ans: 2 },
+            { q: "لدمج خليتين أو أكثر أفقياً (عبر الأعمدة)، نستخدم خاصية:", opts: ["rowspan", "colspan", "merge", "span"], ans: 1 },
+            { q: "لدمج خليتين أو أكثر عمودياً (عبر الصفوف)، نستخدم خاصية:", opts: ["colspan", "rowspan", "merge-row", "group"], ans: 1 },
+            { q: "الوسم المستخدم لتجميع محتوى رأس الجدول هو:", opts: ["<th>", "<thead>", "<tbody>", "<tfoot>"], ans: 1 },
+            { q: "لإنشاء نموذج إدخال بيانات (Form)، نستخدم وسم:", opts: ["<input>", "<form>", "<submit>", "<fieldset>"], ans: 1 },
+            { q: "لإنشاء حقل نصي عادي للإدخال، نستخدم:", opts: ["<input type=\"text\">", "<textfield>", "<input type=\"string\">", "<text>"], ans: 0 },
+            { q: "لإنشاء حقل إدخال كلمة المرور (تظهر الحروف كنجوم أو نقاط)، نستخدم:", opts: ["<input type=\"hidden\">", "<input type=\"secret\">", "<input type=\"password\">", "<input type=\"auth\">"], ans: 2 },
+            { q: "لإنشاء زر اختيار من متعدد بحيث يمكن اختيار عنصر واحد فقط، نستخدم:", opts: ["<input type=\"checkbox\">", "<input type=\"radio\">", "<input type=\"option\">", "<input type=\"select\">"], ans: 1 },
+            { q: "لإنشاء مربع اختيار يتيح للمستخدم تحديد أكثر من خيار، نستخدم:", opts: ["<input type=\"radio\">", "<input type=\"check\">", "<input type=\"checkbox\">", "<input type=\"multiple\">"], ans: 2 },
+            { q: "لإنشاء قائمة منسدلة (Dropdown) في النموذج، نستخدم وسم:", opts: ["<list>", "<select>", "<dropdown>", "<menu>"], ans: 1 },
+            { q: "يتم تحديد الخيارات داخل القائمة المنسدلة باستخدام وسم:", opts: ["<choice>", "<item>", "<option>", "<li>"], ans: 2 },
+            { q: "للسماح للمستخدم بكتابة نص طويل متعدد الأسطر، نستخدم:", opts: ["<input type=\"longtext\">", "<textarea>", "<textbox>", "<multiline>"], ans: 1 },
+            { q: "ما هو الوسم المستخدم لربط عنوان (Label) بحقل إدخال في النماذج؟", opts: ["<label>", "<caption>", "<title>", "<text>"], ans: 0 },
+            { q: "أي من الخصائص التالية في حقل الإدخال <input> تمنع المستخدم من ترك الحقل فارغاً؟", opts: ["validate", "important", "required", "needed"], ans: 2 },
+            { q: "الخاصية التي تضع نصاً إرشادياً باهتاً داخل حقل الإدخال يختفي عند بدء الكتابة هي:", opts: ["value", "placeholder", "hint", "label"], ans: 1 },
+            { q: "أي وسم دلالي (Semantic) يُستخدم لتغليف الترويسة العلوية للموقع أو القسم؟", opts: ["<top>", "<head>", "<header>", "<nav>"], ans: 2 },
+            { q: "الوسم الدلالي المخصص لقائمة روابط التنقل الرئيسية (Navigation) هو:", opts: ["<menu>", "<links>", "<nav>", "<ul>"], ans: 2 },
+            { q: "لتغليف الجزء السفلي (التذييل) من الموقع أو القسم، نستخدم:", opts: ["<bottom>", "<footer>", "<end>", "<base>"], ans: 1 },
+            { q: "أي وسم يُستخدم لتمثيل محتوى مستقل بذاته يمكن نشره منفرداً (مثل مقالة صحفية أو منشور مدونة)؟", opts: ["<article>", "<section>", "<div>", "<main>"], ans: 0 },
+            { q: "لتجميع أجزاء من المحتوى المرتبط ببعضه داخل الصفحة، نستخدم الوسم الدلالي:", opts: ["<group>", "<div>", "<section>", "<body>"], ans: 2 },
+            { q: "الوسم <iframe> يُستخدم لـ:", opts: ["إنشاء إطار للصور", "عرض صفحة ويب أخرى داخل الصفحة الحالية", "عرض رسائل التنبيه للمستخدم", "دمج مقاطع الصوت فقط"], ans: 1 },
+            { q: "أي من الوسوم التالية يعتبر وسم حاوية عام (Generic Container) وليس له أي معنى دلالي (Block-level)؟", opts: ["<section>", "<article>", "<div>", "<span>"], ans: 2 }
+        ];
+
+        const EXAM_DURATION = 40 * 60; // 40 minutes in seconds
+        const PASSING_SCORE = 28;
+        let timeRemaining = EXAM_DURATION;
+        let timerInterval;
+        let examSubmitted = false;
+        let studentName = "";
+
+        // Make functions globally available for inline onclick
+        window.startExam = function () {
+            const nameInput = document.getElementById('student-name');
+            const errorMsg = document.getElementById('name-error');
+
+            if (nameInput.value.trim() === '') {
+                errorMsg.classList.remove('hidden');
+                nameInput.classList.remove('border-gray-200');
+                nameInput.classList.add('border-red-500');
+                nameInput.focus();
+                return;
+            }
+
+            studentName = nameInput.value.trim();
+            document.getElementById('current-student-name').textContent = studentName;
+
+            // Transition
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const examScreen = document.getElementById('exam-screen');
+
+            welcomeScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+                examScreen.classList.remove('hidden');
+                examScreen.classList.add('flex');
+
+                renderQuestions();
+                startTimer();
+                window.scrollTo(0, 0);
+            }, 500);
+        };
+
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            questionsData.forEach((qObj, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200';
+                questionDiv.id = `q-card-${index}`;
+
+                const qTitle = document.createElement('h3');
+                qTitle.className = 'text-lg md:text-xl font-bold text-gray-800 mb-5 leading-relaxed flex items-start';
+
+                const qNum = document.createElement('span');
+                qNum.className = 'bg-blue-100 text-blue-700 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full text-sm ml-3 english-brand font-bold mt-1';
+                qNum.textContent = (index + 1);
+
+                const qText = document.createElement('span');
+                qText.textContent = qObj.q;
+
+                qTitle.appendChild(qNum);
+                qTitle.appendChild(qText);
+                questionDiv.appendChild(qTitle);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 pl-11';
+
+                qObj.opts.forEach((optText, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center p-4 border border-gray-100 rounded-xl hover:bg-blue-50 cursor-pointer transition-colors';
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question_${index}`;
+                    radio.value = optIndex;
+                    radio.className = 'form-radio';
+
+                    const span = document.createElement('span');
+                    span.className = 'text-gray-700 font-medium tracking-wide font-mono mr-3 english-brand text-right break-words';
+                    span.style.direction = 'ltr';
+                    span.textContent = optText;
+
+                    label.appendChild(radio);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                });
+
+                questionDiv.appendChild(optionsGrid);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.id = `feedback-${index}`;
+                feedbackDiv.className = 'mt-4 text-sm font-bold hidden px-4 py-3 rounded-lg ml-11';
+                questionDiv.appendChild(feedbackDiv);
+
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function startTimer() {
+            const timerDisplay = document.getElementById('timer-display');
+            timerDisplay.textContent = formatTime(timeRemaining);
+
+            timerInterval = setInterval(() => {
+                if (examSubmitted) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+
+                timeRemaining--;
+                timerDisplay.textContent = formatTime(timeRemaining);
+
+                if (timeRemaining <= 300 && timeRemaining > 0) {
+                    timerDisplay.classList.remove('text-blue-600');
+                    timerDisplay.classList.add('text-red-600');
+                    timerDisplay.parentElement.classList.add('border-red-500', 'bg-red-50');
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    window.submitExam(true);
+                }
+            }, 1000);
+        }
+
+        window.submitExam = async function (isTimeUp = false) {
+            if (examSubmitted) return;
+            examSubmitted = true;
+            clearInterval(timerInterval);
+
+            // Disable UI inputs
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => {
+                radio.disabled = true;
+                radio.parentElement.classList.remove('hover:bg-blue-50', 'cursor-pointer');
+                radio.parentElement.classList.add('cursor-not-allowed', 'opacity-70');
+            });
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900', 'hover:-translate-y-1');
+            submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+            submitBtn.textContent = 'تم التسليم وتصحيح الإجابات';
+
+            let score = 0;
+
+            // Evaluate answers
+            questionsData.forEach((qObj, index) => {
+                const selected = document.querySelector(`input[name="question_${index}"]:checked`);
+                const card = document.getElementById(`q-card-${index}`);
+                const feedback = document.getElementById(`feedback-${index}`);
+
+                const selectedVal = selected ? parseInt(selected.value) : -1;
+
+                if (selectedVal === qObj.ans) {
+                    score++;
+                    card.classList.add('border-green-300', 'bg-green-50/30');
+                    if (selected) selected.parentElement.classList.add('bg-green-100', 'border-green-400');
+                } else {
+                    card.classList.add('border-red-300', 'bg-red-50/30');
+                    if (selected) selected.parentElement.classList.add('bg-red-100', 'border-red-400');
+
+                    feedback.classList.remove('hidden');
+                    feedback.classList.add('bg-red-100', 'text-red-800');
+                    let correctAnswerText = qObj.opts[qObj.ans];
+                    feedback.innerHTML = `الإجابة الصحيحة هي: <span class="english-brand bg-white px-2 py-1 rounded border border-red-200 text-xs shadow-sm">${correctAnswerText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>`;
+                }
+            });
+
+            const passed = score >= PASSING_SCORE;
+            showResultSection(score, passed, isTimeUp);
+
+            // Firebase Logic
+            await saveExamResultToDatabase(score, passed);
+        };
+
+        async function saveExamResultToDatabase(score, passed) {
+            const statusContainer = document.getElementById('db-status-container');
+            const statusText = document.getElementById('db-status-text');
+            const loader = document.getElementById('db-loader');
+
+            if (!isFirebaseReady) {
+                loader.classList.add('hidden');
+                statusText.textContent = "النتيجة محفوظة، ولكن لا يوجد اتصال بقاعدة البيانات.";
+                statusContainer.classList.replace('bg-blue-50', 'bg-yellow-50');
+                statusContainer.classList.replace('text-blue-700', 'text-yellow-700');
+                statusContainer.classList.replace('border-blue-200', 'border-yellow-200');
+                return;
+            }
+
+            try {
+                // حفظ البيانات في كولكشن اسمه "exam_results"
+                const resultsCollectionRef = collection(db, 'exam_results');
+
+                await addDoc(resultsCollectionRef, {
+                    studentName: studentName,
+                    score: score,
+                    maxScore: questionsData.length,
+                    passed: passed,
+                    submittedAt: serverTimestamp()
+                });
+
+                // Update UI on success
+                loader.classList.add('hidden');
+                statusText.textContent = "تم إرسال نتيجتك بنجاح للأستاذ!";
+                statusContainer.classList.replace('bg-blue-50', 'bg-green-50');
+                statusContainer.classList.replace('text-blue-700', 'text-green-800');
+                statusContainer.classList.replace('border-blue-200', 'border-green-300');
+
+            } catch (error) {
+                console.error("Error saving document: ", error);
+
+                // Note: Firestore requires authentication by default to write. 
+                // Instruct user in Firestore rules.
+                loader.classList.add('hidden');
+                statusText.textContent = "حدث خطأ بالاتصال. تأكد أن قواعد Firebase تسمح بالكتابة (Write: true).";
+                statusContainer.classList.replace('bg-blue-50', 'bg-red-50');
+                statusContainer.classList.replace('text-blue-700', 'text-red-700');
+                statusContainer.classList.replace('border-blue-200', 'border-red-200');
+            }
+        }
+
+        function showResultSection(score, passed, isTimeUp) {
+            const resultSection = document.getElementById('result-section');
+            const resultTitle = document.getElementById('result-title');
+            const resultMessage = document.getElementById('result-message');
+            const resultScore = document.getElementById('result-score');
+            const resultStatus = document.getElementById('result-status');
+            const resultBg = document.getElementById('result-bg');
+
+            resultSection.classList.remove('hidden');
+
+            if (isTimeUp) {
+                resultTitle.textContent = 'انتهى الوقت!';
+                resultTitle.className = 'text-3xl font-black mb-2 text-red-700';
+                resultMessage.textContent = 'تم سحب ورقة الامتحان وتسليم الإجابات تلقائياً.';
+            } else {
+                resultTitle.textContent = 'تم التسليم بنجاح!';
+                resultTitle.className = 'text-3xl font-black mb-2 text-gray-800';
+                resultMessage.textContent = 'شكراً لك. يمكنك مراجعة إجاباتك الصحيحة والخاطئة في الأسفل.';
+            }
+
+            resultScore.textContent = `${score} / 50`;
+
+            if (passed) {
+                resultSection.classList.add('border-green-400');
+                resultBg.classList.add('bg-green-500');
+                resultScore.classList.add('text-green-600');
+                resultStatus.textContent = 'ناجح';
+                resultStatus.className = 'text-2xl font-black text-green-600 mt-2 bg-green-100 inline-block px-4 py-1 rounded-full';
+            } else {
+                resultSection.classList.add('border-red-400');
+                resultBg.classList.add('bg-red-500');
+                resultScore.classList.add('text-red-600');
+                resultStatus.textContent = 'راسب';
+                resultStatus.className = 'text-2xl font-black text-red-600 mt-2 bg-red-100 inline-block px-4 py-1 rounded-full';
+            }
+
+            setTimeout(() => {
+                resultSection.classList.remove('scale-95', 'opacity-0');
+                resultSection.classList.add('scale-100', 'opacity-100');
+
+                window.scrollTo({
+                    top: resultSection.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }, 50);
+        }
+    </script>
+</body>
+
+</html>
